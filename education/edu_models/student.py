@@ -12,7 +12,7 @@ class Student(models.Model):
     full_name = models.CharField(max_length=150)
     phone = models.CharField(max_length=20)
     email = models.EmailField(blank=True, null=True)
-    birth_date = models.DateField()
+    birth_date = models.DateField(blank=True, null=True)
     registered_at = models.DateTimeField(auto_now_add=True)
     # courses = models.ManyToManyField(Course, related_name='students', blank=True)
 

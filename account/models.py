@@ -9,3 +9,5 @@ class CustomUser(AbstractUser):
         ('admin','Admin')
     )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+
+# new commit
