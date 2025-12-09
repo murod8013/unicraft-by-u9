@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 style="text-align:center; margin-bottom:30px;">Manage Students for Group: {{ group.name }}</h1>
+
+<style>
+  body {
+      background: #f4f6fb;
+      font-family: 'Inter', sans-serif;
+  }
+
+  .container {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      justify-content: space-between;
+  }
+
+  .box {
+      width: 49%;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.07);
+      border: 1px solid #e5e8ef;
+      min-height: 500px;
+      display: flex;
+      flex-direction: column;
+  }
+
+  h3 {
+      font-size: 22px;
+      text-align: center;
+      color: #2b2c34;
+      margin-bottom: 20px;
+      font-weight: 700;
+  }
+
+  table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+  }
+
+  th {
+      padding: 12px;
+      background: linear-gradient(90deg, #eef2ff, #e5e9ff);
+      color: #333;
+      font-weight: 600;
+  }
+
+  td {
+      padding: 12px;
+      border-bottom: 1px solid #f1f1f1;
+      color: #444;
+  }
+
+  tbody {
+      display: block;
+      max-height: 450px;
+      overflow-y: auto;
+  }
+
+  thead, tbody tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+  }
+
+  tbody tr:hover {
+      background: #f7faff;
+  }
+
+  .checkbox-center { text-align: center; }
+
+  /* Buttons */
+  .primary-btn {
+      background: #ccc; /* Dastlabki holat */
+      color: white;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      margin-top: 15px;
+      cursor: pointer;
+      align-self: center;
+      transition: 0.3s;
+  }
+
+  .primary-btn:hover {
+      background: #4158e6;
+      transform: translateY(-1px);
+  }
+
+  /* Unsaved changes animatsiyasi */
+  .primary-btn.unsaved {
+      background: #5570ff;
+      animation: pulse 1.2s infinite;
+      box-shadow: 0 6px 20px rgba(85,112,255,0.25);
+  }
+
+  @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(85,112,255,0.5); }
+      70% { box-shadow: 0 0 0 10px rgba(85,112,255,0); }
+      100% { box-shadow: 0 0 0 0 rgba(85,112,255,0); }
+  }
+
+  tbody::-webkit-scrollbar {
+      width: 10px;
+  }
+  tbody::-webkit-scrollbar-track {
+      background: #f2f4fa;
+      border-radius: 10px;
+  }
+  tbody::-webkit-scrollbar-thumb {
+      background: #c3cdff;
+      border-radius: 10px;
+  }
+  tbody::-webkit-scrollbar-thumb:hover {
+      background: #9baaff;
+  }
+</style>
+
+<form method="POST" id="groupForm">
+  {% csrf_token %}
+  <div class="container">
+    <!-- Available Students -->
+    <div class="box">
+      <h3>Available Students</h3>
+      <table id="availableStudentsTable">
+        <thead>
+          <tr>
+            <th class="checkbox-center">Select</th>
+            <th>#</th>
+            <th>Username</th>
+            <th>Phone</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in available_students %}
+          <tr data-id="{{ student.id }}">
+            <td class="checkbox-center"><input type="checkbox" class="select-student" value="{{ student.id }}"></td>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ student.user.username }}</td>
+            <td>{{ student.user.phone }}</td>
+            <td>{{ student.user.email|default:"—" }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" style="text-align:center;">No available students</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <button type="button" class="primary-btn" id="addToGroupBtn">Add Selected →</button>
+    </div>
+
+    <!-- Group Students -->
+    <div class="box">
+      <h3>Group Students</h3>
+      <table id="groupStudentsTable">
+        <thead>
+          <tr>
+            <th class="checkbox-center">Select</th>
+            <th>#</th>
+            <th>Full Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in group_students %}
+          <tr data-id="{{ student.id }}">
+            <td class="checkbox-center"><input type="checkbox" class="leave-student" value="{{ student.id }}"></td>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ student.user.username }}</td>
+            <td>{{ student.user.phone }}</td>
+            <td>{{ student.user.email|default:"—" }}</td>
+            <input type="hidden" name="students" value="{{ student.id }}">
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" style="text-align:center;">No students in this group</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <button type="submit" class="primary-btn" id="saveBtn">Save Changes</button>
+      <button type="button" class="primary-btn" id="leaveGroupBtn">← Leave Selected</button>
+    </div>
+  </div>
+</form>
+
+<script>
+const addBtn = document.getElementById('addToGroupBtn');
+const leaveBtn = document.getElementById('leaveGroupBtn');
+const saveBtn = document.getElementById('saveBtn');
+const availableTable = document.getElementById('availableStudentsTable').querySelector('tbody');
+const groupTable = document.getElementById('groupStudentsTable').querySelector('tbody');
+
+let formChanged = false;
+
+// O'zgarish bo'lsa Save tugmasi animatsiya
+function markUnsaved() {
+    if (!formChanged) {
+        formChanged = true;
+        saveBtn.classList.add('unsaved');
+    }
+}
+
+// Add to group
+addBtn.addEventListener('click', () => {
+    const selected = availableTable.querySelectorAll('input[type="checkbox"]:checked');
+    if (selected.length === 0) { alert("Please select at least one student!"); return; }
+
+    selected.forEach(checkbox => {
+        const row = checkbox.closest('tr');
+        const studentId = row.dataset.id;
+        checkbox.checked = false;
+        availableTable.removeChild(row);
+
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'students';
+        hiddenInput.value = studentId;
+        row.appendChild(hiddenInput);
+
+        groupTable.appendChild(row);
+    });
+
+    markUnsaved();
+});
+
+// Leave group
+leaveBtn.addEventListener('click', () => {
+    const selected = groupTable.querySelectorAll('input[type="checkbox"]:checked');
+    if (selected.length === 0) { alert("Please select at least one student!"); return; }
+
+    selected.forEach(checkbox => {
+        const row = checkbox.closest('tr');
+        const studentId = row.dataset.id;
+        checkbox.checked = false;
+        groupTable.removeChild(row);
+
+        const hidden = row.querySelector('input[name="students"]');
+        if (hidden) row.removeChild(hidden);
+
+        availableTable.appendChild(row);
+    });
+
+    markUnsaved();
+});
+
+// Checkbox o'zgarishlari
+availableTable.addEventListener('change', markUnsaved);
+groupTable.addEventListener('change', markUnsaved);
+
+// Form saqlansa animatsiyani o'chirish
+document.getElementById('groupForm').addEventListener('submit', () => {
+    formChanged = false;
+    saveBtn.classList.remove('unsaved');
+});
+
+// Alert sahifani tark qilganda
+window.onbeforeunload = function() {
+    if (formChanged) {
+        return "You have unsaved changes! Are you sure you want to leave?";
+    }
+};
+</script>
+
+{% endblock %}

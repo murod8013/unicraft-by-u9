@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 10px; border-bottom: 1px solid #ddd; }
+  th { background: #f4f4f4; }
+  .center { text-align: center; }
+</style>
+
+<h1>Groups</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Group name</th>
+            <th>Group Start Date</th>
+            <th>Group End Date</th>
+            <th>Course</th>
+            <th>Teacher</th>
+            <th>Student Amount </th>
+
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for group in groups %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+
+            <td><a href="{% url 'group_detail' group.pk %}">{{ group.name }}</a></td>
+
+            <td>{{ group.start_date}}</td>
+            <td>{{ group.end_date}}</td>
+            <td>{{ group.course.name}}</td>
+
+            <td>{{ group.teacher }}</td>
+            <td><a href="{% url 'get_detail_group_student' group.pk %}">{{ group.students_count }}</a></td>
+
+
+
+
+        {% empty %}
+        <tr>
+            <td colspan="7" class="center">Hech qanday group yo‘q.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

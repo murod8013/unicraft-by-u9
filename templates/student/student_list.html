@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 10px; border-bottom: 1px solid #ddd; }
+  th { background: #f4f4f4; }
+  .center { text-align: center; }
+  .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+  }
+</style>
+
+<h1>Students list</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Avatar</th>
+            <th>Full-Name</th>
+            <th>Username</th>
+            <th>Course Name</th>
+            <th>Group name</th>
+            <th>Email</th>
+            <th>Registered At</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for st in student %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+
+            <!-- Avatar -->
+            <td>
+                {% if st.avatar %}
+                    <img src="{{ st.avatar.url }}" class="avatar">
+                {% else %}
+                    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="avatar">
+                {% endif %}
+            </td>
+
+            <td>{{ st.user.full_name }}</td>
+
+            <td>{{ st.user.username }}</td>
+
+
+
+            <!-- Courses (M2M) -->
+            <td>
+                {% if st.courses.all %}
+                    {% if st.courses.all.count > 0 %}
+                        {% for c in st.courses.all %}
+                            {{ c.name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        none
+                    {% endif %}
+                {% else %}
+                    none
+                {% endif %}
+            </td>
+
+            <!-- Groups (M2M) -->
+            <td>
+                {% if st.groups.all.count > 0 %}
+                    {% for gr in st.groups.all %}
+                        {{ gr.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                {% else %}
+                    none
+                {% endif %}
+            </td>
+
+            <td>
+                {% if st.email %}
+                    {{ st.email }}
+                {% else %}
+                    none
+                {% endif %}
+            </td>
+
+
+
+            <td>{{ st.registered_at|date:"Y-m-d H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="8" class="center">Hech qanday student yo‘q.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

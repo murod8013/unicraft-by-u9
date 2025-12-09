@@ -1,7 +1,10 @@
 from django.urls import path
 
 from .edu_views.assign import create_assign,create_detail_normative
+from .edu_views.group import get_group, detail_group, get_detail_group_student
 from .edu_views.narmative import create_normative,get_normative
+from .edu_views.profile import profile_view
+from .edu_views.student import get_student
 
 urlpatterns=[
     path("",create_normative,name="normative-create"),
@@ -9,6 +12,15 @@ urlpatterns=[
     path("normative/list/",get_normative,name="normative-list"),
     path("normative/detail/<int:pk>/",create_detail_normative,name="detail-normative"),
 
+    #students
+    path("student/", get_student, name="student-list"),
+
+    #group
+    path("group/",get_group,name="group-list"),
+    path("group/detail/<int:pk>/",detail_group,name="group_detail"),
+    path("group/detail-st/<int:pk>/", get_detail_group_student, name="get_detail_group_student"),
 
 
-]
+    #profie
+    path('profile/profile/', profile_view, name="profile_view"),
+    ]
