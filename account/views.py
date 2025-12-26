@@ -28,6 +28,8 @@ def create_user(request):
     return render(request, 'account/register.html', context)
 
 
+
+
 def login_user(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -35,8 +37,12 @@ def login_user(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
-            login(request, user)
-            return redirect('home')
+            if user is not None:  # ✅ foydalanuvchi topildimi?
+                login(request, user)
+
+                return redirect('home')
+            else:
+                form.add_error(None, "Username yoki parol noto‘g‘ri")  # ❌ xato bo‘lsa error qo‘shamiz
     else:
         form = LoginForm()
     return render(request, 'account/login.html', {'form': form})

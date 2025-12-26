@@ -1,11 +1,18 @@
 from django.shortcuts import render
+
 from education.edu_models import Student
+
 
 
 
 def get_student(request):
     students = Student.objects.all()
-    context = {'student': students}
+    # data = student.assign_student.all()
+    assigns = [st.assign_student for st in students]
+    context = {
+        'student': students,
+        'assigns': assigns
+    }
     return render(request, 'student/student_list.html' , context)
 
 #

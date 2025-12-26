@@ -44,7 +44,14 @@
                 {% endif %}
             </td>
 
-            <td>{{ st.user.full_name }}</td>
+            <td>{{ st.full_name }}</td>
+<!--            <td>-->
+<!--                {% if student_profile %}-->
+<!--                    {{ student_profile.full_name }}-->
+<!--                    {% else %}-->
+<!--                    {{ request.user.get_full_name }}-->
+<!--                    {% endif %}-->
+<!--            </td>-->
 
             <td>{{ st.user.username }}</td>
 

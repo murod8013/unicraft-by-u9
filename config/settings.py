@@ -47,6 +47,8 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.locale.LocaleMiddleware',  # Tilni
+
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -136,3 +138,31 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'account.CustomUser'
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+
+
+# Sayt uchun ishlatiladigan tillar
+
+LANGUAGES = [
+
+    ('en', 'English'),
+
+    ('uz', 'Uzbek'),
+
+    ('ru', 'Russian'),
+
+]
+
+
+# Tarjima fayllarini qayerda saqlashni ko'rsatish
+
+LOCALE_PATHS = [
+
+    BASE_DIR / 'locale',
+
+]

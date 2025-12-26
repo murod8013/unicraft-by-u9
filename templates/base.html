@@ -1,5 +1,4 @@
 {% load static %}
-<!doctype html>
 <html lang="uz">
 <head>
     <meta charset="utf-8">
@@ -46,6 +45,7 @@
             <li><a href="{% url 'normative-list' %}" class="nav-link text-white"><i class="bi bi-gear me-2"></i>Narmatives</a></li>
             <li><a href="{% url 'group-list' %}" class="nav-link text-white"><i class="bi bi-gear me-2"></i>Group</a></li>
             <li><a href="{% url 'student-list' %}" class="nav-link text-white"><i class="bi bi-gear me-2"></i>Students</a></li>
+            <li><a href="{% url 'assign-list' %}" class="nav-link text-white"><i class="bi bi-gear me-2"></i>Tekshirilmagan narmativlar</a></li>
         </ul>
 
         <div class="mt-4">
@@ -55,6 +55,7 @@
                 <a href="#" class="btn btn-sm btn-light">Admin</a>
                 <a href="#" class="btn btn-sm btn-light">Teacher</a>
                 <a href="#" class="btn btn-sm btn-light">Student</a>
+
             </div>
 
             <hr class="text-white mt-3">

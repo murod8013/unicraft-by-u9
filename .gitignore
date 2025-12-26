@@ -50,3 +50,10 @@
 #.installed.cfg
 #*.egg
 #
+
+
+.idea/
+__pycache__/
+*.pyc
+venv/
+media/
